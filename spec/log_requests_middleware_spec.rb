@@ -23,7 +23,24 @@ RSpec.describe LogRequestsMiddleware do
             url: "anything",
             response: "anything"
           )
-        end.to raise_error(NoMethodError)
+        end.to_not raise_error(NoMethodError)
+      end
+    end
+
+    context "when the log can't be created" do
+      before do
+        allow(Log).to receive(:create!).and_raise("Can't do that!")
+      end
+
+      it "then this test will fail" do
+        expect do
+          middleware1.log_request_and_response!(
+            request: "anything",
+            headers: "anything",
+            url: "anything",
+            response: "anything"
+          )
+        end.to_not raise_error("Can't do that!")
       end
     end
   end
